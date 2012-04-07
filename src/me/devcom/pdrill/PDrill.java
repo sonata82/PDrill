@@ -66,4 +66,8 @@ public class PDrill extends JavaPlugin {
             String commandLabel, String[] args) {
         return commandProcessor.process(sender, commandLabel, args);
     }
+
+    public ConfigurationManager getConfigManager() {
+        return configManager;
+    }
 }

@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 public class CommandProcessor {
     PDrill plugin = null;
 
-    public ConfigurationManager configManager = null;
     public DrillManager drillManager = null;
 
     public final Logger logger = Logger.getLogger("Minecraft");
@@ -22,7 +21,6 @@ public class CommandProcessor {
         plugin = instance;
 
         drillManager = plugin.drillManager;
-        configManager = plugin.configManager;
     }
 
     public boolean process(CommandSender sender, String commandLabel,
@@ -46,7 +44,8 @@ public class CommandProcessor {
             } else if (commandLabel.equalsIgnoreCase("pdload")) {
                 String scriptName = args[1];
 
-                String scriptString = configManager.getScriptByName(scriptName);
+                String scriptString = plugin.getConfigManager()
+                        .getScriptByName(scriptName);
                 if (scriptString != "") {
                     Integer scriptArgsCount = 0;
 
@@ -127,7 +126,7 @@ public class CommandProcessor {
 
                 Player player = (Player) sender;
                 Integer id = drillManager.LinkDB.size() + 1;
-                Fuel fuel = configManager.getFuelByName(args[1]);
+                Fuel fuel = plugin.getConfigManager().getFuelByName(args[1]);
 
                 if (fuel != null) {
                     LinkDrill lDrill = new LinkDrill(plugin, player, drills,
@@ -178,7 +177,7 @@ public class CommandProcessor {
                 String name = args[1];
                 String script = "";
 
-                if (configManager.getScriptByName(name) != "") {
+                if (plugin.getConfigManager().getScriptByName(name) != "") {
                     sender.sendMessage(prefix + "Script with name [" + name
                             + "] allready exists!");
                     return true;
@@ -192,9 +191,9 @@ public class CommandProcessor {
                         }
                     }
 
-                    configManager.saveScript(name, script);
+                    plugin.getConfigManager().saveScript(name, script);
                 } else {
-                    configManager.saveScript(name, "");
+                    plugin.getConfigManager().saveScript(name, "");
                 }
             } else if (what.equalsIgnoreCase("fuel")) {
                 String name = args[1];
@@ -242,7 +241,7 @@ public class CommandProcessor {
 
                 Fuel fuel = new Fuel(id, airSpeed, blockSpeed, blockCount,
                         fuelCount, name);
-                configManager.saveFuel(fuel);
+                plugin.getConfigManager().saveFuel(fuel);
             }
         } else if (commandLabel.equalsIgnoreCase("pdlist")) {
             if (args.length == 0) {
@@ -264,10 +263,11 @@ public class CommandProcessor {
                 }
                 sender.sendMessage("----------------------------");
             } else if (what.equalsIgnoreCase("fuel")) {
-                sender.sendMessage("Fuels: " + configManager.fuels.size());
+                sender.sendMessage("Fuels: "
+                        + plugin.getConfigManager().fuels.size());
                 sender.sendMessage("----------------------------");
                 int i = 0;
-                for (Entry<Integer, Fuel> entry : configManager.fuels
+                for (Entry<Integer, Fuel> entry : plugin.getConfigManager().fuels
                         .entrySet()) {
                     i++;
                     Fuel fuel = entry.getValue();
@@ -284,10 +284,11 @@ public class CommandProcessor {
                 }
                 sender.sendMessage("----------------------------");
             } else if (what.equalsIgnoreCase("script")) {
-                sender.sendMessage("Scripts: " + configManager.scripts.size());
+                sender.sendMessage("Scripts: "
+                        + plugin.getConfigManager().scripts.size());
                 sender.sendMessage("----------------------------");
                 int i = 0;
-                for (Entry<String, String> entry : configManager.scripts
+                for (Entry<String, String> entry : plugin.getConfigManager().scripts
                         .entrySet()) {
                     i++;
                     sender.sendMessage(" " + i + ": [" + entry.getKey() + "]");
